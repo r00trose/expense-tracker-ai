@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Expense, SortConfig } from '@/types/expense';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ExpenseItem from './ExpenseItem';
 import Button from './ui/Button';
 import Card from './ui/Card';
@@ -10,10 +11,12 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Receipt } from 'lucide-react';
 interface ExpenseListProps {
   expenses: Expense[];
   onDelete: (id: string) => void;
+  onEdit: (expense: Expense) => void;
   onSort: (config: SortConfig) => void;
 }
 
-export default function ExpenseList({ expenses, onDelete, onSort }: ExpenseListProps) {
+export default function ExpenseList({ expenses, onDelete, onEdit, onSort }: ExpenseListProps) {
+  const { t } = useLanguage();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'date', order: 'desc' });
 
   const handleSort = (field: SortConfig['field']) => {
@@ -41,7 +44,7 @@ export default function ExpenseList({ expenses, onDelete, onSort }: ExpenseListP
         variant="ghost"
         size="sm"
         onClick={() => handleSort(field)}
-        className={isActive ? 'bg-gray-100' : ''}
+        className={isActive ? 'bg-gray-100 dark:bg-gray-700' : ''}
       >
         {label}
         {icon}
@@ -52,10 +55,10 @@ export default function ExpenseList({ expenses, onDelete, onSort }: ExpenseListP
   if (expenses.length === 0) {
     return (
       <Card className="p-12 text-center animate-fade-in">
-        <Receipt className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No expenses found</h3>
-        <p className="text-gray-600">
-          Start by adding your first expense or adjust your filters.
+        <Receipt className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{t.noExpenses}</h3>
+        <p className="text-gray-600 dark:text-gray-400">
+          {t.noExpensesDescription}
         </p>
       </Card>
     );
@@ -65,20 +68,20 @@ export default function ExpenseList({ expenses, onDelete, onSort }: ExpenseListP
     <div className="space-y-4 animate-slide-up">
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {expenses.length} {expenses.length === 1 ? 'Expense' : 'Expenses'}
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {expenses.length} {expenses.length === 1 ? t.expense : t.expenses}
           </h3>
           <div className="flex gap-2 flex-wrap">
-            <SortButton field="date" label="Date" />
-            <SortButton field="amount" label="Amount" />
-            <SortButton field="category" label="Category" />
+            <SortButton field="date" label={t.sortByDate} />
+            <SortButton field="amount" label={t.sortByAmount} />
+            <SortButton field="category" label={t.sortByCategory} />
           </div>
         </div>
       </Card>
 
       <div className="space-y-3">
         {expenses.map((expense) => (
-          <ExpenseItem key={expense.id} expense={expense} onDelete={onDelete} />
+          <ExpenseItem key={expense.id} expense={expense} onDelete={onDelete} onEdit={onEdit} />
         ))}
       </div>
     </div>
