@@ -74,3 +74,4 @@ The application follows a service-oriented architecture:
 - **Types Layer**: Shared TypeScript interfaces and types
 - **Utils Layer**: Validation and formatting utilities
 - **Main Class**: ExpenseTracker orchestrates all services
+
